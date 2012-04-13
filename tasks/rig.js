@@ -95,7 +95,6 @@ module.exports = function(grunt) {
         },
 
         function(err, results) {
-            console.log(results);
             callback(err, results.join(grunt.utils.normalizelf(options.separator)));
         }
     );
