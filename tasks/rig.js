@@ -6,7 +6,7 @@
  * Licensed under the MIT license.
  */
  
-var reFileTask = /^file\_/i,
+var reFileDirective = /^file\_/i,
     path = require('path'),
     async = require('async'),
     rigger = require('rigger');
@@ -48,7 +48,7 @@ module.exports = function(grunt) {
             var directive = grunt.task.getDirectiveParts(filepath);
         
             // if the directive is a file directive, then extract the basepath
-            if (directive && reFileTask.test(directive[0])) {
+            if (directive && reFileDirective.test(directive[0])) {
                 filepath = directive[1];
             }
             // otherwise if we are dealing with a directive, then reset the filepath

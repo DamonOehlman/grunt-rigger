@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "homepage": "https://github.com/DamonOehlman/grunt-rigger",
   "author": {
-    "name": "Damon Oehlman <damon.oehlman@sidelab.com>",
+    "name": "Damon Oehlman",
     "email": "damon.oehlman@sidelab.com"
   },
   "repository": {
@@ -30,11 +30,11 @@
   },
   "dependencies": {
     "async": "0.1.x",
-    "grunt": "~0.3.8",
+    "grunt": "0.3.x",
     "rigger": "0.2.x"
   },
   "devDependencies": {
-    "grunt": "~0.3.8"
+    "grunt": "0.3.x"
   },
   "keywords": [
     "gruntplugin"
