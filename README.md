@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/DamonOehlman/grunt-rigger.png)](http://travis-ci.org/DamonOehlman/grunt-rigger)
 # grunt-rigger
 
 Rigging tasks for elegant includes
