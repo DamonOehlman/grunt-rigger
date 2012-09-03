@@ -31,7 +31,7 @@
   "dependencies": {
     "async": "0.1.x",
     "grunt": "0.3.x",
-    "rigger": "0.2.x"
+    "rigger": "0.3.x"
   },
   "devDependencies": {
     "grunt": "0.3.x"
