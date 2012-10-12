@@ -13,7 +13,6 @@ var reFileDirective = /^file\_/i,
     grunt = require('grunt'),
     async = grunt.utils.async,
     _ = grunt.utils._,
-    riggerOpts = {},
     helpers = {};
     
 function logOutput(instance) {
@@ -27,26 +26,21 @@ function logOutput(instance) {
 }
   
 // initialise the compile helper
-helpers.compile = function() {
+function compile() {
     var files = [];
+    
+    if (! this.data.files) {
+        return grunt.fail.warn(new Error('No files specified for ' + this.target + ' target'));
+    }
 
     // iterate through the files 
-    _.forEach(this.data, function(src, dst) {
+    _.forEach(this.data.files || {}, function(src, dst) {
         files.push({ src: src, dst: dst });
     });
     
-    async.forEach(files, rigTarget, this.async());
-};
-    
-function rigFiles() {
-    if (this.target == 'opts') {
-        riggerOpts = _.clone(this.data);
-    }
-    
-    // call the appropriate helper
-    (helpers[this.target] || helpers.compile).call(this);
+    async.forEach(files, rigTarget.bind(this), this.async());
 }
-
+    
 function rigTarget(target, callback) {
     // expand the directives
     var destFile = path.resolve(target.dst),
@@ -75,7 +69,7 @@ function rigTarget(target, callback) {
           return grunt.task.directive(filepath, grunt.file.read);
         }),
         
-        opts = _.defaults(riggerOpts, {
+        opts = _.defaults(this.data.options || {}, {
             separator: grunt.utils.linefeed
         }),
         
@@ -87,7 +81,7 @@ function rigTarget(target, callback) {
         fileContents,
         
         function(data, itemCallback) {
-            logOutput(rigger.process(data, _.defaults(fileOpts[fileIndex++], riggerOpts), itemCallback));
+            logOutput(rigger.process(data, fileOpts[fileIndex++], itemCallback));
         },
     
         function(err, results) {
@@ -105,6 +99,6 @@ function rigTarget(target, callback) {
 module.exports = function(grunt) {
   
   // register the rig and rigger tasks
-  grunt.registerMultiTask('rig', 'Rig files using targetting include patterns', rigFiles);
-  grunt.registerMultiTask('rigger', 'Rig files using targetting include patterns', rigFiles);
+  grunt.registerMultiTask('rig', 'Rig files using targetting include patterns', compile);
+  grunt.registerMultiTask('rigger', 'Rig files using targetting include patterns', compile);
 };
