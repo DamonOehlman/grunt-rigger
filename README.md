@@ -1,19 +1,43 @@
 # grunt-rigger
 
-Rigging tasks for elegant includes
+This is a [grunt](https://github.com/gruntjs/grunt) plugin for the [buildJS](https://github.com/buildjs) tool [rigger](https://github.com/buildjs/rigger). 
 
-## Getting Started
-Install this grunt plugin next to your project's [grunt.js gruntfile][getting_started] with: `npm install grunt-rigger`
+Rigger provides targetted include functionality (similar to [sprockets](https://github.com/sstephenson/sprockets)) but with some additional functionality.  A highlight of rigger functionality is outlined below:
 
-Then add this line to your project's `grunt.js` gruntfile:
+- Simple include format for including files using a special comment syntax (`//= foo.js`)
+- Ability to include remote resources as well as local: (`http://github.com/buildjs/shims/string/trim.js`)
+- Ability to intelligently transpile from [coffee-script](https://coffeescript.org), [stylus](http://learnboost.github.com/stylus/), etc to their natural web equivalents (js, css, etc).
 
-```javascript
-grunt.loadNpmTasks('grunt-rigger');
+## Usage
+
+To use `grunt-rigger` you will need to include it in your `package.json` file (I'd recommend under the `devDependencies` section):
+
+```json
+{
+  "name": "myproject",
+  "devDependencies": {
+    "coffee-script": "1.3.x",
+    "grunt-rigger": "0.4.x"
+  },
+}
 ```
 
-[grunt]: https://github.com/cowboy/grunt
-[getting_started]: https://github.com/cowboy/grunt/blob/master/docs/getting_started.md
+You will see in the example above, `coffee-script` is also included in the `devDependencies` section.  In cases where you would like to leverage riggers ability to transpile files (e.g. `.coffee` => `.js`) you will need to include the appropriate node package in your `devDependencies` as these are not automatically included in rigger itself (to avoid library bloat).
 
-To get started with [rigger](https://github.com/buildjs/rigger) and `grunt-rigger` I highly recommend checking out [DerickBailey's](https://twitter.com/derickbailey) excellent screencast:
+Using `grunt-rigger` within grunt itself is very simple.  Consider the following sample `grunt.js` file:
 
-http://www.watchmecode.net/amd-builds-with-grunt
+```js
+module.exports = function(grunt) {
+    grunt.initConfig({
+        rig: {
+            compile: {
+                'dist/simple.js': 'src/simple.js'
+            }
+        }
+    });
+
+    grunt.loadNpmTasks('grunt-rigger');
+};
+```
+
+That should be pretty much it, if your source file contains any [rigger](https://github.com/buildjs/rigger) comments they will be parsed and executed accordingly.
