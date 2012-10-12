@@ -20,21 +20,19 @@
       "url": "https://github.com/DamonOehlman/grunt-rigger/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "grunt.js",
-  "bin": "bin/grunt-rigger",
   "engines": {
     "node": "*"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "./node_modules/.bin/mocha --reporter spec -t 30s"
   },
   "dependencies": {
-    "async": "0.1.x",
-    "grunt": "0.3.x",
-    "rigger": "0.3.x"
+    "rigger": "0.4.x",
+    "grunt": "0.3.x"
   },
   "devDependencies": {
-    "grunt": "0.3.x"
+    "coffee-script": "1.3.x",
+    "mocha": "1.5.x"
   },
   "keywords": [
     "gruntplugin"
