@@ -29,9 +29,12 @@ helpers.compile = function() {
     async.forEach(
         files,
         function(file, itemCallback) {
-            var destFile = path.resolve(file.dst);
+            var destFile = path.resolve(file.dst),
+                opts = _.defaults(riggerOpts, {
+                    targetType: path.extname(destFile)
+                });
             
-            rigger(path.resolve(file.src), riggerOpts, function(err, output) {
+            rigger(path.resolve(file.src), opts, function(err, output) {
                 if (err) return itemCallback(err);
                 
                 grunt.file.mkdir(path.dirname(destFile));
