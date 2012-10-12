@@ -15,6 +15,16 @@ var reFileDirective = /^file\_/i,
     _ = grunt.utils._,
     riggerOpts = {},
     helpers = {};
+    
+function logOutput(instance) {
+    instance.on('include:file', function(file) {
+        grunt.log.writeln('*including* ' + file.slice(process.cwd().length + 1));
+    });
+    
+    instance.on('include:remote', function(target) {
+        grunt.log.writeln('*including* ' + target);
+    });
+}
   
 // initialise the compile helper
 helpers.compile = function() {
@@ -34,12 +44,12 @@ helpers.compile = function() {
                     targetType: path.extname(destFile)
                 });
             
-            rigger(path.resolve(file.src), opts, function(err, output) {
+            logOutput(rigger(path.resolve(file.src), opts, function(err, output) {
                 if (err) return itemCallback(err);
                 
                 grunt.file.mkdir(path.dirname(destFile));
                 fs.writeFile(destFile, output, 'utf8', itemCallback);
-            });
+            }));
         },
         done
     );

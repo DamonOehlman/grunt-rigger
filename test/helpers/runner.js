@@ -8,6 +8,7 @@ module.exports = function(target) {
     }
     
     return function(done) {
+        grunt.log.muted = true;
         grunt.tasks('rig', opts, done);
     };
 };
