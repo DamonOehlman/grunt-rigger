@@ -8,97 +8,100 @@
  
 var reFileDirective = /^file\_/i,
     path = require('path'),
-    fs = require('fs'),
-    rigger = require('rigger'),
-    grunt = require('grunt'),
-    async = grunt.utils.async,
-    _ = grunt.utils._,
-    helpers = {};
-    
-function logOutput(instance) {
-    instance.on('include:file', function(file) {
-        grunt.log.writeln('*including* ' + file.slice(process.cwd().length + 1));
-    });
-    
-    instance.on('include:remote', function(target) {
-        grunt.log.writeln('*including* ' + target);
-    });
-}
-  
-// initialise the compile helper
-function compile() {
-    var files = [];
-    
-    if (! this.data.files) {
-        return grunt.fail.warn(new Error('No files specified for ' + this.target + ' target'));
-    }
+    async = require('async'),
+    rigger = require('rigger');
 
-    // iterate through the files 
-    _.forEach(this.data.files || {}, function(src, dst) {
-        files.push({ src: src, dst: dst });
+module.exports = function(grunt) {
+  
+  // Please see the grunt documentation for more information regarding task and
+  // helper creation: https://github.com/cowboy/grunt/blob/master/docs/toc.md
+
+  // ==========================================================================
+  // TASKS
+  // ==========================================================================
+
+  grunt.registerMultiTask('rig', 'Your task description goes here.', function() {
+    // get the files
+    var files = this.files,
+        callback = this.async(),
+        rigTask = this;
+
+    this.files.forEach(function(f) {
+        rig(f, function(err, data) {
+            // write the output file
+            grunt.file.write(f.dest, data);
+            grunt.log.writeln('File "' + f.dest + '" created.');
+            
+            // TODO: error handling for async 
+
+            // trigger the callback
+            callback();
+        });
     });
-    
-    async.forEach(files, rigTarget.bind(this), this.async());
-}
-    
-function rigTarget(target, callback) {
+
+
+  });
+
+  // ==========================================================================
+  // HELPERS
+  // ==========================================================================
+
+  function rig(files, options, callback) {
     // expand the directives
-    var destFile = path.resolve(target.dst),
-        files = [].concat(target.src || []),
-        fileOpts = files.map(function(filepath) {
-            var directive = grunt.task.getDirectiveParts(filepath);
+    var fileOpts = files.src.map(function(filepath) {
+        // var directive = grunt.task.getDirectiveParts(filepath);
         
-            // if the directive is a file directive, then extract the basepath
-            if (directive && reFileDirective.test(directive[0])) {
-                filepath = directive[1];
-            }
-            // otherwise if we are dealing with a directive, then reset the filepath
-            else if (directive) {
-                filepath = '';
-            }
+        // // if the directive is a file directive, then extract the basepath
+        // if (directive && reFileDirective.test(directive[0])) {
+        //     filepath = directive[1];
+        // }
+        // // otherwise if we are dealing with a directive, then reset the filepath
+        // else if (directive) {
+        //     filepath = '';
+        // }
+    
+        // return the directory for the path
+        return filepath ? {
+            cwd: path.resolve(path.dirname(filepath)),
+            filetype: path.extname(filepath).slice(1)
+        } : null;
+    }),
         
-            // return the directory for the path
-            return filepath ? {
-                cwd: path.resolve(path.dirname(filepath)),
-                targetType: path.extname(filepath)
-            } : null;
-        }),
+    // get the file contents
+    fileContents = files.src.map(function(filepath) {
+      return grunt.file.read(filepath);
+    }),
+    
+    // define a file index to sync the contents map with basePath
+    // it's a bit hacky but async doesn't tell us
+    fileIndex = 0;
         
-        // get the file contents
-        fileContents = files.map(function(filepath) {
-          return grunt.task.directive(filepath, grunt.file.read);
-        }),
-        
-        opts = _.defaults(this.data.options || {}, {
-            separator: grunt.utils.linefeed
-        }),
-        
-        // initialise the file tracking index
-        fileIndex = 0;
-        
+    // remap options if required
+    if (typeof options === 'function') {
+        callback = options;
+        options = {};
+    }
+    
+    // ensure we have options
+    options = options || {};
+    
+    // default the separate to linefeed as per concat
+    options = grunt.util._.defaults(options || {}, {
+      separator: grunt.util.linefeed
+    });
+
     // process each of the files that need to be rigged
     async.map(
         fileContents,
         
         function(data, itemCallback) {
-            logOutput(rigger.process(data, fileOpts[fileIndex++], itemCallback));
+            rigger.process(data, fileOpts[fileIndex++], itemCallback);
         },
-    
+
         function(err, results) {
-            grunt.file.mkdir(path.dirname(destFile));
-            
-            fs.writeFile(
-                destFile,
-                results.join(grunt.utils.normalizelf(opts.separator)),
-                'utf8',
-                callback);
+            callback(err, results.join(grunt.util.normalizelf(options.separator)));
         }
     );
-}
+  }
 
-module.exports = function(grunt) {
-  
-  // register the rig and rigger tasks
-  grunt.registerMultiTask('rig', 'Rig files using targetting include patterns', compile);
-  grunt.registerMultiTask('rigger', 'Rig files using targetting include patterns', compile);
 };
