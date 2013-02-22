@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "rigger": "0.4.x",
-    "grunt": "0.3.x"
+    "grunt": "0.4.x"
   },
   "devDependencies": {
     "coffee-script": "1.3.x",
