@@ -1,3 +1,0 @@
---timeout 2s
---reporter spec
---globals TAP_Global_Harness,AssertionError,events

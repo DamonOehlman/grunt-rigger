@@ -1,7 +1,7 @@
 {
   "name": "grunt-rigger",
   "description": "Rigging tasks for elegant includes",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "homepage": "https://github.com/DamonOehlman/grunt-rigger",
   "author": {
     "name": "Damon Oehlman",
@@ -20,19 +20,25 @@
       "url": "https://github.com/DamonOehlman/grunt-rigger/blob/master/LICENSE-MIT"
     }
   ],
+  "main": "Gruntfile.js",
   "engines": {
-    "node": "*"
+    "node": ">= 0.8.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec -t 30s"
+    "test": "grunt test"
   },
   "dependencies": {
-    "rigger": "0.4.x",
-    "grunt": "0.3.x"
+    "rigger": "0.4.x"
   },
   "devDependencies": {
-    "coffee-script": "1.3.x",
-    "mocha": "1.5.x"
+    "grunt-contrib-jshint": "~0.2.0",
+    "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt": "~0.4.0",
+    "coffee-script": "1.3.x"
+  },
+  "peerDependencies": {
+    "grunt": "~0.4.0"
   },
   "keywords": [
     "gruntplugin"

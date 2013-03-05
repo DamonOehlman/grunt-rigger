@@ -5,100 +5,103 @@
  * Copyright (c) 2012 Damon Oehlman <damon.oehlman@sidelab.com>
  * Licensed under the MIT license.
  */
- 
-var reFileDirective = /^file\_/i,
-    path = require('path'),
-    fs = require('fs'),
-    rigger = require('rigger'),
-    grunt = require('grunt'),
-    async = grunt.utils.async,
-    _ = grunt.utils._,
-    helpers = {};
-    
-function logOutput(instance) {
-    instance.on('include:file', function(file) {
-        grunt.log.writeln('*including* ' + file.slice(process.cwd().length + 1));
-    });
-    
-    instance.on('include:remote', function(target) {
-        grunt.log.writeln('*including* ' + target);
-    });
-}
-  
-// initialise the compile helper
-function compile() {
-    var files = [];
-    
-    if (! this.data.files) {
-        return grunt.fail.warn(new Error('No files specified for ' + this.target + ' target'));
-    }
 
-    // iterate through the files 
-    _.forEach(this.data.files || {}, function(src, dst) {
-        files.push({ src: src, dst: dst });
-    });
-    
-    async.forEach(files, rigTarget.bind(this), this.async());
-}
-    
-function rigTarget(target, callback) {
-    // expand the directives
-    var destFile = path.resolve(target.dst),
-        files = [].concat(target.src || []),
-        fileOpts = files.map(function(filepath) {
-            var directive = grunt.task.getDirectiveParts(filepath);
-        
-            // if the directive is a file directive, then extract the basepath
-            if (directive && reFileDirective.test(directive[0])) {
-                filepath = directive[1];
-            }
-            // otherwise if we are dealing with a directive, then reset the filepath
-            else if (directive) {
-                filepath = '';
-            }
-        
-            // return the directory for the path
-            return filepath ? {
-                cwd: path.resolve(path.dirname(filepath)),
-                targetType: path.extname(filepath)
-            } : null;
-        }),
-        
-        // get the file contents
-        fileContents = files.map(function(filepath) {
-          return grunt.task.directive(filepath, grunt.file.read);
-        }),
-        
-        opts = _.defaults(this.data.options || {}, {
-            separator: grunt.utils.linefeed
-        }),
-        
-        // initialise the file tracking index
-        fileIndex = 0;
-        
-    // process each of the files that need to be rigged
-    async.map(
-        fileContents,
-        
-        function(data, itemCallback) {
-            logOutput(rigger.process(data, fileOpts[fileIndex++], itemCallback));
-        },
-    
-        function(err, results) {
-            grunt.file.mkdir(path.dirname(destFile));
-            
-            fs.writeFile(
-                destFile,
-                results.join(grunt.utils.normalizelf(opts.separator)),
-                'utf8',
-                callback);
-        }
-    );
-}
+'use strict';
+
+var path = require('path'),
+    rigger = require('rigger');
 
 module.exports = function(grunt) {
-  
-  // register the rig and rigger tasks
-  grunt.registerMultiTask('rig', 'Rig files using targetting include patterns', compile);
-  grunt.registerMultiTask('rigger', 'Rig files using targetting include patterns', compile);
+  var async = grunt.util.async;
+
+  grunt.registerMultiTask('rig', 'This is a grunt plugin for the tool rigger which provides targetted include functionality.', function() {
+    // Merge task-specific and/or target-specific options with these defaults.
+    var options = this.options({
+      separator: grunt.util.linefeed,
+      banner: '',
+      footer: '',
+      process: false
+    });
+
+    // async task callback
+    var done = this.async();
+
+    // Normalize boolean options that accept options objects.
+    if (options.process === true) { options.process = {}; }
+
+    // Process banner and footer.
+    var banner = grunt.template.process(options.banner);
+    var footer = grunt.template.process(options.footer);
+
+    // Iterate over all src-dest file pairs.
+    async.forEach(this.files, function(f, cb) {
+      // Concat banner + specified files + footer.
+      var src = banner;
+
+      async.map(
+        f.src.filter(function(filepath) {
+          // Warn on and remove invalid source files (if nonull was set).
+          if (!grunt.file.exists(filepath)) {
+            grunt.log.warn('Source file "' + filepath + '" not found.');
+            return false;
+          } else {
+            return true;
+          }
+        }), 
+        function(filepath, cb) {
+          // rig file
+          rig(filepath, f.dest, function(err, src) {
+            if (err) {
+              grunt.log.warn('Failed to rig file "' + filepath);
+              return cb(err);
+            }
+
+            // Process files as templates if requested.
+            if (options.process) {
+              src = grunt.template.process(src, options.process);
+            }
+
+            cb(null, src);
+          });
+        }, 
+        function(err, files) {
+          if (err) {
+            grunt.log.warn('Failed with error: "' + err);
+            return cb(err);
+          }
+
+          src += files.join(grunt.util.normalizelf(options.separator)) + footer;
+          
+          // Write the destination file.
+          grunt.file.write(f.dest, src);
+
+          // Print a success message.
+          grunt.log.writeln('File "' + f.dest + '" created.');
+
+          cb();
+        }
+      );
+    },
+    function(err) {
+      if (err) {
+        grunt.log.warn('Failed with error: "' + err);
+        return done(err);
+      }
+      done();
+    });
+  });
+
+  function rig(filepath, targetpath, callback) {
+    // rigger options
+    var option = {
+      cwd: path.resolve(path.dirname(filepath)),
+      filetype: path.extname(filepath).slice(1),
+      targetType: path.extname(targetpath).slice(1)
+    };
+        
+    // get the file content
+    var content = grunt.file.read(filepath);
+
+    rigger.process(content, option, callback);
+  }
 };

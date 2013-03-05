@@ -30,8 +30,14 @@ Using `grunt-rigger` within grunt itself is very simple.  Consider the following
 module.exports = function(grunt) {
     grunt.initConfig({
         rig: {
-            compile: {
-                'dist/simple.js': 'src/simple.js'
+            compile: {        
+                options: {
+                    banner: '/* THIS BANNER USES TEMPLATE FUNCTIONALITY <%= banner_property %> */\n',
+                    footer: '\n/* SOME FOOTER */'
+                },
+                files: {
+                    'dist/simple.js': ['src/simple.js']
+                }
             }
         }
     });
