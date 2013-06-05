@@ -1,1 +1,1 @@
-//= github://DamonOehlman/snippets/dom/create-element
+//= github://buildjs/rigger/test/input/local-singlefile
