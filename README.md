@@ -1,5 +1,7 @@
 # grunt-rigger
 
+<a href="http://travis-ci.org/#!/DamonOehlman/grunt-rigger"><img src="https://secure.travis-ci.org/DamonOehlman/grunt-rigger.png" alt="Build Status"></a>
+
 This is a [grunt](https://github.com/gruntjs/grunt) plugin for the [buildJS](https://github.com/buildjs) tool [rigger](https://github.com/buildjs/rigger). 
 
 Rigger provides targetted include functionality (similar to [sprockets](https://github.com/sstephenson/sprockets)) but with some additional functionality.  A highlight of rigger functionality is outlined below:
