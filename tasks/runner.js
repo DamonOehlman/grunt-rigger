@@ -1,20 +1,26 @@
-/*
- * grunt-rigger
- * https://github.com/damo/grunt-rigger
- *
- * Copyright (c) 2012 Damon Oehlman <damon.oehlman@sidelab.com>
- * Licensed under the MIT license.
- */
-
 'use strict';
 
-var path = require('path'),
-    rigger = require('rigger');
+var path = require('path');
+var rigger = require('rigger');
 
 module.exports = function(grunt) {
   var async = grunt.util.async;
 
-  grunt.registerMultiTask('rig', 'This is a grunt plugin for the tool rigger which provides targetted include functionality.', function() {
+  function rig(filepath, targetpath, callback) {
+    // rigger options
+    var option = {
+      cwd: path.resolve(path.dirname(filepath)),
+      filetype: path.extname(filepath).slice(1),
+      targetType: path.extname(targetpath).slice(1)
+    };
+        
+    // get the file content
+    var content = grunt.file.read(filepath);
+
+    rigger.process(content, option, callback);
+  }
+
+  return function() {
     // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({
       separator: grunt.util.linefeed,
@@ -89,19 +95,5 @@ module.exports = function(grunt) {
       }
       done();
     });
-  });
-
-  function rig(filepath, targetpath, callback) {
-    // rigger options
-    var option = {
-      cwd: path.resolve(path.dirname(filepath)),
-      filetype: path.extname(filepath).slice(1),
-      targetType: path.extname(targetpath).slice(1)
-    };
-        
-    // get the file content
-    var content = grunt.file.read(filepath);
-
-    rigger.process(content, option, callback);
-  }
+  };
 };

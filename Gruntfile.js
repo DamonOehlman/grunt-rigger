@@ -31,6 +31,33 @@ module.exports = function(grunt) {
     // Configuration to be run (and then tested).
     banner_property: 'AWESOME',
 
+    rigger: {
+      default_options: {
+        files: {
+          'tmp/default_options.js': ['test/fixtures/default_options.js']
+        }
+      },
+      custom_options: {
+        options: {
+          banner: '/* THIS TEST IS <%= banner_property %> */\n',
+          footer: '\ndude'
+        },
+        files: {
+          'tmp/custom_options.js': ['test/fixtures/default_options.js']
+        }
+      },
+      transpile: {
+        files: {
+          'tmp/transpile_coffee.js': ['test/fixtures/transpile.coffee']
+        }
+      },
+      remote: {
+        files: {
+          'tmp/remote.js': ['test/fixtures/remote.js']
+        }
+      }
+    },
+
     rig: {
       default_options: {
         files: {
@@ -56,21 +83,6 @@ module.exports = function(grunt) {
           'tmp/remote.js': ['test/fixtures/remote.js']
         }
       }
-      // custom_options: {
-      //   options: {
-      //     separator: '\n;\n',
-      //     banner: '/* THIS TEST IS <%= banner_property %> */\n',
-      //     footer: 'dude'
-      //   },
-      //   files: {
-      //     'tmp/custom_options': ['test/fixtures/file1', 'test/fixtures/file2']
-      //   }
-      // },
-      // handling_invalid_files: {
-      //   src: ['test/fixtures/file1', 'invalid_file/should_warn/but_not_fail', 'test/fixtures/file2'],
-      //   dest: 'tmp/handling_invalid_files',
-      //   nonull: true
-      // }
     },
 
     // Unit tests.
@@ -90,7 +102,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'rig', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'rigger', 'rig', 'nodeunit']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);
