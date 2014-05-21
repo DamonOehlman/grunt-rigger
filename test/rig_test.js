@@ -30,6 +30,17 @@ exports.rig = {
 
     test.done();
   },
+
+  transpile_bare: function(test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/transpile_bare_coffee.js');
+    var expected = grunt.file.read('test/expected/transpile_bare_coffee.js');
+    test.equal(actual, expected, 'should transpile coffee to js (with option bare)');
+
+    test.done();
+  },
+
   remote: function(test) {
     test.expect(1);
 

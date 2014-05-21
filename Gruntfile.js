@@ -51,6 +51,11 @@ module.exports = function(grunt) {
           'tmp/transpile_coffee.js': ['test/fixtures/transpile.coffee']
         }
       },
+      transpile_bare: {
+        files: {
+          'tmp/transpile_bare_coffee.js': ['test/fixtures/transpile.coffee']
+        }
+      },
       remote: {
         files: {
           'tmp/remote.js': ['test/fixtures/remote.js']
@@ -76,6 +81,11 @@ module.exports = function(grunt) {
       transpile: {
         files: {
           'tmp/transpile_coffee.js': ['test/fixtures/transpile.coffee']
+        }
+      },
+      transpile_bare: {
+        files: {
+          'tmp/transpile_bare_coffee.js': ['test/fixtures/transpile.coffee']
         }
       },
       remote: {
