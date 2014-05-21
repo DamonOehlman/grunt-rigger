@@ -14,18 +14,10 @@
   "bugs": {
     "url": "https://github.com/DamonOehlman/grunt-rigger/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/DamonOehlman/grunt-rigger/blob/master/LICENSE-MIT"
-    }
-  ],
+  "license": "MIT",
   "main": "Gruntfile.js",
-  "engines": {
-    "node": ">= 0.8.0"
-  },
   "scripts": {
-    "test": "./node_modules/.bin/grunt test"
+    "test": "grunt test"
   },
   "dependencies": {
     "rigger": "0.5.x"
