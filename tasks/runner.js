@@ -2,22 +2,22 @@
 
 var path = require('path');
 var rigger = require('rigger');
+var async = require('async');
+var extend = require('cog/extend');
 
 module.exports = function(grunt) {
-  var async = grunt.util.async;
-
-  function rig(filepath, targetpath, callback) {
+  function rig(filepath, targetpath, options, callback) {
     // rigger options
-    var option = {
+    options = extend({}, options, {
       cwd: path.resolve(path.dirname(filepath)),
       filetype: path.extname(filepath).slice(1),
       targetType: path.extname(targetpath).slice(1)
-    };
-        
+    });
+
     // get the file content
     var content = grunt.file.read(filepath);
 
-    rigger.process(content, option, callback);
+    rigger.process(content, options, callback);
   }
 
   return function() {
@@ -53,10 +53,10 @@ module.exports = function(grunt) {
           } else {
             return true;
           }
-        }), 
+        }),
         function(filepath, cb) {
           // rig file
-          rig(filepath, f.dest, function(err, src) {
+          rig(filepath, f.dest, options, function(err, src) {
             if (err) {
               grunt.log.warn('Failed to rig file "' + filepath);
               return cb(err);
@@ -69,7 +69,7 @@ module.exports = function(grunt) {
 
             cb(null, src);
           });
-        }, 
+        },
         function(err, files) {
           if (err) {
             grunt.log.warn('Failed with error: "' + err);
@@ -77,7 +77,7 @@ module.exports = function(grunt) {
           }
 
           src += files.join(grunt.util.normalizelf(options.separator)) + footer;
-          
+
           // Write the destination file.
           grunt.file.write(f.dest, src);
 
