@@ -31,12 +31,12 @@
     "rigger": "0.5.x"
   },
   "devDependencies": {
-    "grunt-cli": "0.1.x",
-    "grunt-contrib-jshint": "~0.2.0",
-    "grunt-contrib-nodeunit": "~0.1.2",
-    "grunt-contrib-clean": "~0.4.0",
+    "grunt-cli": "~0.1",
+    "grunt-contrib-jshint": "~0.10",
+    "grunt-contrib-nodeunit": "~0.4",
+    "grunt-contrib-clean": "~0.5",
     "grunt": "~0.4.0",
-    "coffee-script": "1.5.x"
+    "coffee-script": "^1"
   },
   "peerDependencies": {
     "grunt": "~0.4.0"
