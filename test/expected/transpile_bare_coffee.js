@@ -1,5 +1,5 @@
 var cubes, list, math, num, number, opposite, race, square,
-    __slice = [].slice;
+  __slice = [].slice;
 
 number = 42;
 
