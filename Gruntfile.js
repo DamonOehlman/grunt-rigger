@@ -54,6 +54,9 @@ module.exports = function(grunt) {
       transpile_bare: {
         files: {
           'tmp/transpile_bare_coffee.js': ['test/fixtures/transpile.coffee']
+        },
+        options: {
+          bare: true
         }
       },
       remote: {
@@ -86,6 +89,9 @@ module.exports = function(grunt) {
       transpile_bare: {
         files: {
           'tmp/transpile_bare_coffee.js': ['test/fixtures/transpile.coffee']
+        },
+        options: {
+          bare: true
         }
       },
       remote: {
