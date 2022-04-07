@@ -20,7 +20,7 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "async": "~0.9",
+    "async": "~3.2.2",
     "cog": "~0.5",
     "rigger": "~0.5"
   },
