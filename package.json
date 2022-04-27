@@ -22,7 +22,7 @@
   "dependencies": {
     "async": "~0.9",
     "cog": "~0.5",
-    "rigger": "~0.5"
+    "rigger": "~1.0.0"
   },
   "devDependencies": {
     "grunt-cli": "~0.1",
